@@ -1,16 +1,16 @@
-Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools
+# Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools
 
-# CliMAF and its scripts interface
+## CliMAF and its scripts interface
 
-## CliMAF basics
+### CliMAF basics
 
-`CliMAF <https://climaf.readthedocs.io>`_ is a climate models
+[CliMAF](https://climaf.readthedocs.io) is a climate models
 evaluation framework developped and used by CNRM, ISPL and CERFACS. It
-is Open source and `available on GitHub
-<https://github.com/rigoudyg/climaf>`_
+is Open source and [available on GitHub]
+(https://github.com/rigoudyg/climaf)
 
-CliMAF is basically a Python-scriptable way to process NetCDF `CF
-compliant <http://cfconventions.org/>`_ climate model outputs
+CliMAF is basically a Python-scriptable way to process NetCDF [CF
+compliant](http://cfconventions.org/)_ climate model outputs
 described through an abstraction : input data are defined by facets
 which translate to actual data files through configuration of
 so-called data projects.
@@ -29,14 +29,14 @@ CliMAF allows :
 - to handle a cache of results, which access keys are CRS expressions.
 
   
-## Scripts interface principles in CliMAF 
+### Scripts interface principles in CliMAF 
 
 - the script's data formats are  :
 
      - NetCDF files for data input
      - NetCDF or graphic files for data output
 
-- NetCDF files must be `CF-compliant <http://cfconventions.org/>`_
+- NetCDF files must be [CF-compliant](http://cfconventions.org/)
 
 - all script parameters are provided as arguments on the script
   command-line; this applies to input and output filenames and to all
@@ -68,7 +68,7 @@ CliMAF allows :
     - for an input dataset representing an ensemble : which are the
       symbolic names for members ?
 
-    - for other parameters : which is there name ?
+    - for other parameters : which is their name ?
 
 - this declaration translates to the creation of a python function
   which can be used for scripting operations using CliMAF, which
@@ -95,40 +95,40 @@ CliMAF allows :
   second part is prone to be iterated much often than first one (which
   results will then be cached).
 
-Further details are provided in `CliMAF documentation's relevant
-section<https://climaf.readthedocs.io/en/master/operators.html#operators>`_
+Further details are provided in [CliMAF documentation's relevant
+section](https://climaf.readthedocs.io/en/master/operators.html#operators)
 
   
-## Basic example for interfacing a script with CliMAF
+### Basic example for interfacing a script with CliMAF
 
--   Declare operator ``my_cdo`` based on an off-the-shelf
-    script/binary (``cdo``)::
+- Declare operator ``my_cdo`` based on an off-the-shelf
+  script/binary (``cdo``):
 
-     >>> cscript('mycdo','cdo ${operator} ${in} ${out}')
+       cscript('mycdo','cdo ${operator} ${in} ${out}')
 
--   Use the defined operator in CliMAF : define a dataset ``tas_ds``
-    and apply ``my_cdo`` on it, providing it with value ``tim_avg`` for
-    argument ``operator``::
+- Use the defined operator in CliMAF : define a dataset ``tas_ds``
+  and apply ``my_cdo`` on it, providing it with value ``tim_avg`` for
+  argument ``operator``:
 
-     >>> tas_ds = ds(project='example', simulation='AMIP', variable='tas', period='1980-1981')
-     >>> tas_avg = mycdo(tas_ds,operator='timavg')
+       tas_ds = ds(project='example', simulation='AMIP', variable='tas', period='1980-1981')
+       tas_avg = mycdo(tas_ds,operator='timavg')
 
--   The script/binary is actually called e.g. when requesting a file with
-    the content of object ``tas_avg``, as in::
+- The script/binary is actually called e.g. when requesting a file with
+  the content of object ``tas_avg``, as in:
 
-     >>> filen = cfile(tas_avg)
+       filen = cfile(tas_avg)
 
-    which returns the filename::
+   which returns the filename::
 
-    /home/my/tmp/climaf_cache/4e/4.nc
+      /home/my/tmp/climaf_cache/4e/4.nc
 
-    ..while the actual system call launched behind the curtain by CliMAF would look like::
+   ..while the actual system call launched behind the curtain by CliMAF would look like:
 
-     $ cdo tim_avg /home/my/data/AMIP/AMIP_tas.nc /home/my/tmp/climaf_cache/4e/4.nc
+       $ cdo tim_avg /home/my/data/AMIP/AMIP_tas.nc /home/my/tmp/climaf_cache/4e/4.nc
 
 
 
-# Keypoints of the IS-ENES3 standard interface
+## Keypoints of the IS-ENES3 standard interface
 
 The IS-ENES3 standard interface for pluging diagnostic scripts in
 evaluation tools (hereafter ISI) is based on a (recommended) script
@@ -136,16 +136,16 @@ description file, a master interface file and data definition
 files. It assumes that the script is implemented as a command ine tool
 uwhich reads the master interface file.
 
-The script definition file provides the list of mandatory and optional
+The **script definition file** provides the list of mandatory and optional
 keys for the script, and further references (to litterature and
 documentation); it does not describe in a structured way the list of
 outputs generated by the script.
 
-The master interface file provides the name of the data definition
+The **master interface file** provides the name of the data definition
 files, the values of all script input parameters, and ancilliary
 information (such as a log level and imposed working directories)
 
-Each data definition file contains for a series of input file : the
+Each **data definition file** contains for a series of input file : the
 name of the variable, an `alias`, and the filename for all input data
 for this alias+variable; it may contain metadata (based on the CMIP6
 Data Reference Syntax) for complementing data description; it may also
@@ -158,14 +158,14 @@ or should the script use it for selecting a period in the datafile
 explicit.
 
 
-# Compatibility between the IS-ENES3 standard interface and CliMAF
+## Compatibility between the IS-ENES3 standard interface and CliMAF
 
-##  Shallow compatibility
+###  Shallow compatibility
 (implémentation dans CLiMAF)
 
-## Deep compatibility
+### Deep compatibility
    ? pre-processing
 
-## CliMAF changes needed for compatibility
+### CliMAF changes needed for compatibility
 
-## Changes to the standard needed for compatibility
+### Changes to the standard needed for compatibility
