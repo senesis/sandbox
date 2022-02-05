@@ -10,7 +10,8 @@ February 2022
 evaluation framework developped and used by CNRM, ISPL and CERFACS. It
 is Open source and [available on GitHub](https://github.com/rigoudyg/climaf)
 
-<a id="anchor"></a>
+<a id="my_private_anchor"></a>
+
 CliMAF is basically a python-scriptable way to process NetCDF [CF
 compliant](http://cfconventions.org/) climate model outputs
 described through an abstraction : input data are defined by facets
@@ -30,7 +31,6 @@ CliMAF allows :
   called 'lazy evaluation')
 - to handle a cache of results, which access keys are CRS expressions.
 
-[ go to anchor ](#anchor)  
 ### Scripts interface principles in CliMAF 
 
 #### Data formats
@@ -56,21 +56,18 @@ CliMAF allows :
   files)
 
 #### Declare script command line
-  The script command line is declared to CLiMAF using patterns for
-  arguments, and the patterns syntax supports their semantics, which
-  translates script capabilities, among:  
+    The script command line is declared to CLiMAF using patterns for
+    arguments, and the patterns syntax supports their semantics, which
+    translates script capabilities, among:  
     - for each input dataset argument : can it be a series of files
       splitted on the time coordinate ? does it represent an ensemble
       ? can the script apply variable renaming, rescaling, or override
       units, or transform a constant to the missing value ? which
       should be the rank of this input in the calling sequence ?
-      
     - for each output data : which is its symbolic name (in order to
       distinguish among multiple outputs) ? how can CliMAF derive
       the output variable name from the input variable name ?
-      
     - for other parameters : which is their name ?
-
     - can the script select data ind atafiles based on the variable
       name, the time period, the space domain ?
 
