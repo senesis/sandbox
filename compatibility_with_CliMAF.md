@@ -1,4 +1,6 @@
 # Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools
+Stéphane Sénési and Jérôme Servonnat, IPSL
+February 2022
 
 ## CliMAF and its scripts interface
 
@@ -8,6 +10,7 @@
 evaluation framework developped and used by CNRM, ISPL and CERFACS. It
 is Open source and [available on GitHub](https://github.com/rigoudyg/climaf)
 
+### <a id="anchor"></a> ###
 CliMAF is basically a python-scriptable way to process NetCDF [CF
 compliant](http://cfconventions.org/) climate model outputs
 described through an abstraction : input data are defined by facets
@@ -27,12 +30,11 @@ CliMAF allows :
   called 'lazy evaluation')
 - to handle a cache of results, which access keys are CRS expressions.
 
-  
+[ go to anchor ](#anchor)  
 ### Scripts interface principles in CliMAF 
 
 #### Data formats
   The script's data formats are  :
-
      - NetCDF files for data input
      - NetCDF or graphic files for data output
 
@@ -41,8 +43,7 @@ CliMAF allows :
 #### Use command line
   All script parameters are provided as arguments on the script
   command-line; this applies to input and output filenames and to all
-  other types of parameters; this implies that other parameters have a
-  simple type : number or string; this also implies that scripts do
+  other types of parameters; this implies that scripts do
   not choose the output filenames (CliMAF provides them with filenames
   in its cache). Under these assumptions, **CliMAF requires no change
   to pre-existing scripts**.
@@ -57,8 +58,7 @@ CliMAF allows :
 #### Declare script command line
   The script command line is declared to CLiMAF using patterns for
   arguments, and the patterns syntax supports their semantics, which
-  translates script capabilities, among:
-  
+  translates script capabilities, among:  
     - for each input dataset argument : can it be a series of files
       splitted on the time coordinate ? does it represent an ensemble
       ? can the script apply variable renaming, rescaling, or override
