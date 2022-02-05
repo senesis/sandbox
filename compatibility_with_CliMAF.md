@@ -2,6 +2,32 @@
 Stéphane Sénési and Jérôme Servonnat, IPSL
 February 2022
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools](#compatibility-with-climaf-of-the-is-enes3-standard-interface-for-pluging-diagnostic-scripts-in-evaluation-tools)
+    - [CliMAF and its scripts interface](#climaf-and-its-scripts-interface)
+        - [CliMAF basics](#climaf-basics)
+        - [Scripts interface principles in CliMAF](#scripts-interface-principles-in-climaf)
+            - [Data formats](#data-formats)
+            - [Use command line](#use-command-line)
+            - [Propose basic pre-processing](#propose-basic-pre-processing)
+            - [Declare script command line](#declare-script-command-line)
+            - [... which creates a python function](#-which-creates-a-python-function)
+            - [Match `operator` call sequence to script parameters](#match-operator-call-sequence-to-script-parameters)
+            - [Automate processing ensembles](#automate-processing-ensembles)
+            - [Separate graphics and numeric outputs](#separate-graphics-and-numeric-outputs)
+        - [Basic example for interfacing a script with CliMAF](#basic-example-for-interfacing-a-script-with-climaf)
+    - [Keypoints of the IS-ENES3 standard interface](#keypoints-of-the-is-enes3-standard-interface)
+    - [Compatibility between the IS-ENES3 standard interface and CliMAF](#compatibility-between-the-is-enes3-standard-interface-and-climaf)
+        - [Shallow compatibility](#shallow-compatibility)
+        - [Deep compatibility](#deep-compatibility)
+        - [CliMAF changes needed for compatibility](#climaf-changes-needed-for-compatibility)
+        - [Changes to the standard needed for compatibility](#changes-to-the-standard-needed-for-compatibility)
+
+<!-- markdown-toc end -->
+
+
 ## CliMAF and its scripts interface
 
 ### CliMAF basics
@@ -32,7 +58,6 @@ CliMAF allows :
 - to handle a cache of results, which access keys are CRS expressions.
 
 ### Scripts interface principles in CliMAF 
-
 #### Data formats
   The script's data formats are  :
      - NetCDF files for data input
@@ -56,24 +81,23 @@ CliMAF allows :
   files)
 
 #### Declare script command line
-    The script command line is declared to CLiMAF using patterns for
-    arguments, and the patterns syntax supports their semantics, which
-    translates script capabilities, among:  
-    - for each input dataset argument : can it be a series of files
-      splitted on the time coordinate ? does it represent an ensemble
-      ? can the script apply variable renaming, rescaling, or override
-      units, or transform a constant to the missing value ? which
-      should be the rank of this input in the calling sequence ?
-    - for each output data : which is its symbolic name (in order to
-      distinguish among multiple outputs) ? how can CliMAF derive
-      the output variable name from the input variable name ?
-    - for other parameters : which is their name ?
-    - can the script select data ind atafiles based on the variable
-      name, the time period, the space domain ?
-
-    - for an input dataset representing an ensemble : which script
-      argument should receive the symbolic names for members, if
-      needed ?
+The script command line is declared to CLiMAF using patterns for
+arguments, and the patterns syntax supports their semantics, which
+translates script capabilities, among:  
+- for each input dataset argument : can it be a series of files
+  splitted on the time coordinate ? does it represent an ensemble
+  ? can the script apply variable renaming, rescaling, or override
+  units, or transform a constant to the missing value ? which
+  should be the rank of this input in the calling sequence ?
+- for each output data : which is its symbolic name (in order to
+  distinguish among multiple outputs) ? how can CliMAF derive
+  the output variable name from the input variable name ?
+- for other parameters : which is their name ?
+- can the script select data ind atafiles based on the variable
+  name, the time period, the space domain ?
+ - for an input dataset representing an ensemble : which script
+  argument should receive the symbolic names for members, if
+  needed ?
 
 #### ... which creates a python function
   This declaration translates
@@ -110,7 +134,6 @@ section](https://climaf.readthedocs.io/en/master/operators.html#operators)
 
   
 ### Basic example for interfacing a script with CliMAF
-
 Declare operator ``my_cdo`` based on an off-the-shelf
 script/binary (``cdo``):
 
@@ -135,8 +158,6 @@ which returns the filename::
 ..while the actual system call launched behind the curtain by CliMAF would look like:
 
        $ cdo tim_avg /home/my/data/AMIP/AMIP_tas.nc /home/my/tmp/climaf_cache/4e/4.nc
-
-
 
 ## Keypoints of the IS-ENES3 standard interface
 
@@ -175,11 +196,11 @@ not explicit.
 CliMAF is a natural candidate for being one of the `tool` using the ISI. 
 
 ###  Shallow compatibility
-
 CliMAF interface design is quite different from ISI's:
 
   - it does not assume that the script is changed to adapt to the interface, and it adapts to the existing script command line structure
   - it communicates all script parameters and input data references through the command line, while ISI uses the master interface file; also, it
+  - it treats separately data ensembles and single members, while ISI handle single members as an ensemble of size one
   - part of the information provided in ISI's script definition file is in CliMAF supported by [the script declaration phase](#declare-script-command-line)
 
 Nevertheless, regarding feeding the script with input data and parameters, there is no basic incompatibility, as both interfaces have necessarily to provide the same basic set of information.
