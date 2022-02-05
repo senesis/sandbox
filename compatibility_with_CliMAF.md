@@ -10,7 +10,7 @@ February 2022
 evaluation framework developped and used by CNRM, ISPL and CERFACS. It
 is Open source and [available on GitHub](https://github.com/rigoudyg/climaf)
 
-### <a id="anchor"></a> ###
+<a id="anchor"></a>
 CliMAF is basically a python-scriptable way to process NetCDF [CF
 compliant](http://cfconventions.org/) climate model outputs
 described through an abstraction : input data are defined by facets
