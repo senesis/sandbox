@@ -1,5 +1,7 @@
 # Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools
-Stéphane Sénési and Jérôme Servonnat, IPSL
+
+Stéphane Sénési and Jérôme Servonnat, IPSL, 
+
 February 2022
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
@@ -29,7 +31,6 @@ February 2022
 
 
 ## CliMAF and its scripts interface
-
 ### CliMAF basics
 
 [CliMAF](https://climaf.readthedocs.io) is a climate models
@@ -60,8 +61,8 @@ CliMAF allows :
 ### Scripts interface principles in CliMAF 
 #### Data formats
   The script's data formats are  :
-     - NetCDF files for data input
-     - NetCDF or graphic files for data output
+  - NetCDF files for data input
+  - NetCDF or graphic files for data output
 
   and NetCDF files must be [CF-compliant](http://cfconventions.org/)
 
@@ -99,7 +100,7 @@ translates script capabilities, among:
   argument should receive the symbolic names for members, if
   needed ?
 
-#### ... which creates a python function
+#### ... which creates a python function (or `operator`)
   This declaration translates
   to the creation of a python function (called a `CliMAF operator`)
   which can be used for scripting operations using CliMAF, which
@@ -192,30 +193,91 @@ not explicit.
 
 
 ## Compatibility between the IS-ENES3 standard interface and CliMAF
-
 CliMAF is a natural candidate for being one of the `tool` using the ISI. 
-
 ###  Shallow compatibility
 CliMAF interface design is quite different from ISI's:
 
-  - it does not assume that the script is changed to adapt to the interface, and it adapts to the existing script command line structure
-  - it communicates all script parameters and input data references through the command line, while ISI uses the master interface file; also, it
-  - it treats separately data ensembles and single members, while ISI handle single members as an ensemble of size one
-  - part of the information provided in ISI's script definition file is in CliMAF supported by [the script declaration phase](#declare-script-command-line)
+  - it does not assume that the script is changed to adapt to the
+    interface, and it adapts to the existing script command line
+    structure;
+  - it communicates all script parameters and input data references
+    through the command line, while ISI uses the master interface
+    file;
+  - it treats separately data ensembles and single members, while ISI
+    handle single members as an ensemble of size one;
+  - part of the information provided in ISI's script definition file
+    is in CliMAF supported by [the script declaration
+    phase](#declare-script-command-line)
 
-Nevertheless, regarding feeding the script with input data and parameters, there is no basic incompatibility, as both interfaces have necessarily to provide the same basic set of information.
+Nevertheless, regarding feeding the script with input data and
+parameters, there is no basic incompatibility, as both interfaces have
+necessarily to provide the same basic set of information.
 
-However, a few ... :
+Three other differences can be noted :
 
-- ISI does not include any feature allowing to avoid pre-processing data before calling the script (see the [script declaration phase](#declare-script-command-line). While this not a real incompatibility, this means that for a number of use cases, un-necessary intermediate files may have to be generated when using ISI. 
+- ISI does not include any feature allowing to avoid pre-processing
+  data before calling the script (see the [script declaration
+  phase](#declare-script-command-line). While this not a real
+  incompatibility, this means that for a number of use cases,
+  un-necessary intermediate files may have to be generated when using
+  ISI.
 
-- ISI allows for parameter values which have complex types (those allowed by yaml); this is inherited from ESMValTool, with which the user can also use yaml, in recipes, for providing parameter values; CLiMAF has to code parameter values in strings (for the command line), and leveraging values to complex types would need to setup a convention for this coding.
+- ISI allows for parameter values which have complex types (those
+  allowed by yaml); this is inherited from ESMValTool, with which the
+  user can also use yaml, in recipes, for providing parameter values;
+  CLiMAF has to code parameter values in strings (for the command
+  line)
+
+- CliMAF does allows only for NetCDF and graphics outputs, and does
+  not allow having both types for a single script, while ISI does not
+  impose any constraint about outputs.
 
 
 ### Deep compatibility
-   ? pre-processing
+The most significant difference between ISI and CLiMAF interface is
+about declaring script's outputs : ISI provides no way to declare how
+many outputs the script will generate, nor to label them, while CliMAF
+imposes it. CLiMAF use the output labels for naming the actual outputs
+by combining it with the the CRS expresssion representing the script
+call. This is instrumental in CLiMAF's logic for caching all results,
+including in order to re-use outputs in further processing.
 
 ### CliMAF changes needed for compatibility
-(implémentation dans CLiMAF)
+The main changes that would be needed in CliMAF for interfacing with
+scripts matching the ISI are :
+
+- to create a function allowing both to declare an ISI compatible
+  script and to create a corresponding python function (called an
+  `ISI-operator`) usable in CliMAF scripting
+
+- to create a driver function able to :
+
+  - build ISI compliant master interface file and data definition
+    files, based on datatets and keyword parameters used in calls to
+    an `ISI-operator`
+  - create user-required working directories
+  - call the script (taking care if needed of setting environment) 
+  - return basic information on script success and results location
+
+Regarding the question of converting to ISI those scripts that are
+already interfaced with CliMAF : it is not deemed practicable for most
+of these scripts which are actually binaries that live outside CliMAF
+(such as CDO commands) and hence are not easy to modify; for the few
+other ones, the change is not necessarily useful
+
 
 ### Changes to the standard needed for compatibility
+The sole change in ISI that would be really useful for taking full
+advantage of ISI compatible scripts is to make the recommended script
+definition file mandatory and to include a manadatory script outputs
+declaration section; such a section would include, for each output :
+
+- a label allowing CliMAF to name this output
+- a pattern allowing CliMAF to find this output in one of the working
+  directories
+
+CliMAF would then require further changes for reading the definition
+file, and for searching for script outputs and storing them in cache.
+
+### Compatibility proof-of-concept 
+aaa	
