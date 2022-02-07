@@ -4,10 +4,18 @@ Stéphane Sénési and Jérôme Servonnat, IPSL,
 
 February 2022
 
+## Abstract
+CliMAF is largely compatible with the IS-ENES3 standard interface, and
+this was demonstrated by an actual implementation using the parent
+interface (ESMValTool's). However, CLiMAF cannot handle script outputs
+in its cache because the standard interface does not describe script
+outputs.
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools](#compatibility-with-climaf-of-the-is-enes3-standard-interface-for-pluging-diagnostic-scripts-in-evaluation-tools)
+    - [Abstract](#abstract)
     - [CliMAF and its scripts interface](#climaf-and-its-scripts-interface)
         - [CliMAF basics](#climaf-basics)
         - [Scripts interface principles in CliMAF](#scripts-interface-principles-in-climaf)
@@ -40,11 +48,10 @@ is Open source and [available on GitHub](https://github.com/rigoudyg/climaf)
 
 <a id="my_private_anchor"></a>
 
-CliMAF is basically a python-scriptable way to process NetCDF [CF
-compliant](http://cfconventions.org/) climate model outputs
-described through an abstraction : input data are defined by facets
-which translate to actual data files through configuration of
-so-called data projects.
+CliMAF is basically a python-scriptable way to process NetCDF climate
+model outputs described through an abstraction : input data are
+defined by facets which translate to actual data files through
+configuration of so-called data projects.
 
 CliMAF allows :
 
@@ -166,11 +173,14 @@ which returns the filename::
 ## Keypoints of the IS-ENES3 standard interface
 
 The IS-ENES3 standard interface (hereafter ISI) for pluging diagnostic
-scripts in evaluation tools (called `tools`) is based on a
-(recommended) script description file, a master interface file and
-data definition files. It assumes that the script is implemented as a
-command line tool which is driven by the master interface file
-content. The interface files are in Yaml format.
+scripts in evaluation tools (hereafter `tools`) is described in the main
+body of the present document.
+
+It is based on a (recommended) script
+description file, a master interface file and data definition
+files. It assumes that the script is implemented as a command line
+tool which is driven by the master interface file content. The
+interface files are in Yaml format.
 
 The optional, static **script definition file** provides the list of
 mandatory and optional keys (i.e. parameter names) for the script, and
