@@ -15,7 +15,7 @@ February 2022
             - [Use command line](#use-command-line)
             - [Propose basic pre-processing](#propose-basic-pre-processing)
             - [Declare script command line](#declare-script-command-line)
-            - [... which creates a python function](#-which-creates-a-python-function)
+            - [... which creates a python function (or `operator`)](#-which-creates-a-python-function-or-operator)
             - [Match `operator` call sequence to script parameters](#match-operator-call-sequence-to-script-parameters)
             - [Automate processing ensembles](#automate-processing-ensembles)
             - [Separate graphics and numeric outputs](#separate-graphics-and-numeric-outputs)
@@ -26,6 +26,7 @@ February 2022
         - [Deep compatibility](#deep-compatibility)
         - [CliMAF changes needed for compatibility](#climaf-changes-needed-for-compatibility)
         - [Changes to the standard needed for compatibility](#changes-to-the-standard-needed-for-compatibility)
+        - [Compatibility proof-of-concept](#compatibility-proof-of-concept)
 
 <!-- markdown-toc end -->
 
@@ -60,11 +61,12 @@ CliMAF allows :
 
 ### Scripts interface principles in CliMAF 
 #### Data formats
-  The script's data formats are  :
+The script's data formats are  :
+
   - NetCDF files for data input
   - NetCDF or graphic files for data output
 
-  and NetCDF files must be [CF-compliant](http://cfconventions.org/)
+and NetCDF files must be [CF-compliant](http://cfconventions.org/)
 
 #### Use command line
   All script parameters are provided as arguments on the script
@@ -78,13 +80,14 @@ CliMAF allows :
   CliMAF can pre-process input data regarding selection on variable,
   time and/or space, re-scaling and renaming variables, and
   aggregating data files ; but it can also let the script do it by
-  itself for efficiency purpose (thus avoiding creating intermediate
+  itself for efficiency purpose (thus avoiding to create intermediate
   files)
 
 #### Declare script command line
 The script command line is declared to CLiMAF using patterns for
-arguments, and the patterns syntax supports their semantics, which
+arguments, and the pattern syntax supports their semantics, which
 translates script capabilities, among:  
+
 - for each input dataset argument : can it be a series of files
   splitted on the time coordinate ? does it represent an ensemble
   ? can the script apply variable renaming, rescaling, or override
@@ -107,7 +110,7 @@ translates script capabilities, among:
   basically create CliMAF objects representing the chain of operations
   and their arguments; at a later stage, under user control, such
   objects are 'evaluated', which means that each script involved in
-  each sub-object is launched in turn (except if its resultes are
+  each sub-object is launched in turn (except if its results are
   available in the cache), and its results are stored in the cache
 
 #### Match `operator` call sequence to script parameters
@@ -193,7 +196,7 @@ not explicit.
 
 
 ## Compatibility between the IS-ENES3 standard interface and CliMAF
-CliMAF is a natural candidate for being one of the `tool` using the ISI. 
+CliMAF is a natural candidate for being one of the `tools` using the ISI. 
 ###  Shallow compatibility
 CliMAF interface design is quite different from ISI's:
 
@@ -204,7 +207,7 @@ CliMAF interface design is quite different from ISI's:
     through the command line, while ISI uses the master interface
     file;
   - it treats separately data ensembles and single members, while ISI
-    handle single members as an ensemble of size one;
+    handle single members as an ensembles of size one;
   - part of the information provided in ISI's script definition file
     is in CliMAF supported by [the script declaration
     phase](#declare-script-command-line)
@@ -267,10 +270,12 @@ other ones, the change is not necessarily useful
 
 
 ### Changes to the standard needed for compatibility
-The sole change in ISI that would be really useful for taking full
-advantage of ISI compatible scripts is to make the recommended script
-definition file mandatory and to include a manadatory script outputs
-declaration section; such a section would include, for each output :
+The sole change in ISI that is instrumental for CLiMAF to take full
+advantage of ISI compatible scripts in CliMAF is related to the deep
+compatibility issue invoked [above](#deep-comatibility). It would be
+to make the (recommended) script definition file mandatory and to
+include a manadatory script outputs declaration section; such a
+section would include, for each output :
 
 - a label allowing CliMAF to name this output
 - a pattern allowing CliMAF to find this output in one of the working
@@ -278,6 +283,19 @@ declaration section; such a section would include, for each output :
 
 CliMAF would then require further changes for reading the definition
 file, and for searching for script outputs and storing them in cache.
+A further change would be to handle more varied type of outputs (and
+not only graphics and NetCDF files)
 
 ### Compatibility proof-of-concept 
-aaa	
+In order to check [the analysis
+above](#climaf-changes-needed-for-compatibility) about CliMAF changes
+needed for ISI compatibility, we took advantage of the fact that ISI
+inherits from [ESMValTool scripts
+interface](https://docs.esmvaltool.org/projects/esmvalcore/en/latest/interfaces.html),
+and implemented in version 2.0.2 of CliMAF the changes needed for
+interfacing with version 2.3 of ESMVaTool, as [described in CLiMAF
+documentation](https://climaf.readthedocs.io/en/master/esmvaltool.html).
+This was successfully tested for calling the Climate Variability
+Diagnostic Package (CVDP) embarked in ESVMavTool, and [ŧhis
+page](https://climaf.readthedocs.io/en/master/esmvaltool.html#example)
+shows a pratical CliMAF scripting example.
