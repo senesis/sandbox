@@ -104,7 +104,7 @@ translates script capabilities, among:
   distinguish among multiple outputs) ? how can CliMAF derive
   the output variable name from the input variable name ?
 - for other parameters : which is their name ?
-- can the script select data ind atafiles based on the variable
+- can the script select data in datafiles based on the variable
   name, the time period, the space domain ?
  - for an input dataset representing an ensemble : which script
   argument should receive the symbolic names for members, if
@@ -151,7 +151,7 @@ script/binary (``cdo``):
        cscript('mycdo','cdo ${operator} ${in} ${out}')
 
 Use the defined operator in CliMAF : define a dataset ``tas_ds``
-and apply ``my_cdo`` on it, providing it with value ``tim_avg`` for
+and apply ``my_cdo`` on it, providing it with value ``timavg`` for
 argument ``operator``:
 
        tas_ds = ds(project='example', simulation='AMIP', variable='tas', period='1980-1981')
@@ -162,13 +162,13 @@ the content of object ``tas_avg``, as in:
 
        filen = cfile(tas_avg)
 
-which returns the filename::
+which returns the filename (built by CliMAF using the user provided path to the CliMAF cache and a hash of the CRS):
 
       /home/my/tmp/climaf_cache/4e/4.nc
 
 ..while the actual system call launched behind the curtain by CliMAF would look like:
 
-       $ cdo tim_avg /home/my/data/AMIP/AMIP_tas.nc /home/my/tmp/climaf_cache/4e/4.nc
+       $ cdo timavg /home/my/data/AMIP/AMIP_tas.nc /home/my/tmp/climaf_cache/4e/4.nc
 
 ## Keypoints of the IS-ENES3 standard interface
 
@@ -230,7 +230,7 @@ Three other differences can be noted :
 
 - ISI does not include any feature allowing to avoid pre-processing
   data before calling the script (see the [script declaration
-  phase](#declare-script-command-line). While this not a real
+  phase](#declare-script-command-line). While this is not a real
   incompatibility, this means that for a number of use cases,
   un-necessary intermediate files may have to be generated when using
   ISI.
@@ -241,7 +241,7 @@ Three other differences can be noted :
   CLiMAF has to code parameter values in strings (for the command
   line)
 
-- CliMAF does allows only for NetCDF and graphics outputs, and does
+- CliMAF allows only for NetCDF and graphics outputs, and does
   not allow having both types for a single script, while ISI does not
   impose any constraint about outputs.
 
