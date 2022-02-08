@@ -1,6 +1,6 @@
 # Compatibility with CliMAF of the IS-ENES3 standard interface for pluging diagnostic scripts in evaluation tools
 
-Stéphane Sénési and Jérôme Servonnat, IPSL, 
+Stéphane Sénési and Jérôme Servonnat, IPSL. 
 
 February 2022
 
@@ -314,10 +314,10 @@ needed for ISI compatibility, we took advantage of the fact that ISI
 inherits from [ESMValTool scripts
 interface](https://docs.esmvaltool.org/projects/esmvalcore/en/latest/interfaces.html),
 and implemented in version 2.0.2 of CliMAF the changes needed for
-interfacing with version 2.3 of ESMVaTool, as [described in CLiMAF
+interfacing with version 2.3 of ESMValTool, as [described in CLiMAF
 documentation](https://climaf.readthedocs.io/en/master/esmvaltool.html).
 This was successfully tested for calling the Climate Variability
-Diagnostic Package (CVDP) embarked in ESVMavTool, and the code below 
+Diagnostic Package (CVDP) embarked in ESMValTool, and the code below 
 shows the corresponding CliMAF script.
 
 
