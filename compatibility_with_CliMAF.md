@@ -7,11 +7,12 @@ February 2022
 ## Abstract
 CliMAF is largely compatible with the IS-ENES3 standard interface, and
 this was demonstrated by an actual implementation using the parent
-interface (ESMValTool's). 
-It is thus possible to execute a script that uses the standard interface from CliMAF.
-However, CLiMAF looses its smart cache functionnality when executing a script using the standard interface: it cannot handle script outputs
-in its cache because the standard interface does not describe script
-outputs.
+interface (ESMValTool's).  It is thus possible to execute a script
+that uses the standard interface from CliMAF.  However, CLiMAF looses
+its smart cache functionnality when executing a script using the
+standard interface: it cannot handle script outputs in its cache
+because the standard interface does not describe script outputs before
+script execution.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -48,8 +49,6 @@ outputs.
 evaluation framework developped and used by CNRM, ISPL and CERFACS. It
 is Open source and [available on GitHub](https://github.com/rigoudyg/climaf)
 
-<a id="my_private_anchor"></a>
-
 CliMAF is basically a python-scriptable way to process NetCDF climate
 model outputs described through an abstraction : input data are
 defined by facets which translate to actual data files through
@@ -62,8 +61,10 @@ CliMAF allows to :
   arguments
 - easily describe piping and combining such scripts, using the
   full flexibility of python
-- keep track of such combinations by building formal expressions in
-  a simple syntax (called **CRS** for CliMAF Reference Syntax); the CRS is notably a way to document the provenance of all CliMAF result and build a unique identifier for each result
+- keep track of such combinations by building formal expressions in a
+  simple syntax (called **CRS** for CliMAF Reference Syntax); the CRS
+  is notably a way to document the provenance of all CliMAF result and
+  to build a unique identifier for each result
 - trigger CRS expression computation only once needed (this is also
   called 'lazy evaluation')
 - handle a cache of results, which access keys are CRS expressions.
@@ -164,7 +165,10 @@ the content of object ``tas_avg``, as in:
 
        filen = cfile(tas_avg)
 
-cfile both executes the script on ``tas_avg`` and returns the filename (built by CliMAF using the user provided path to the CliMAF cache and a hash of the CRS):
+cfile both executes the script involved in ``tas_avg`` (if result is
+not yet available in cache) and returns the filename (built by CliMAF
+using the user provided path to the CliMAF cache and a hash of the
+CRS):
 
       /home/my/tmp/climaf_cache/4e/4.nc
 
@@ -256,13 +260,14 @@ Three other differences can be noted :
 The most significant difference between ISI and CLiMAF interface is
 about declaring script's outputs : ISI provides no way to declare how
 many outputs the script will generate, nor to label them, while CliMAF
-imposes it. CLiMAF uses the output labels for naming the actual outputs
-by combining it with the the CRS expresssion representing the script
-call. This is instrumental in CLiMAF's logic for caching all results,
-including in order to re-use outputs in further processing.
-Therefore, all CliMAF functionalities downstream of the execution of a script
-(cache, use of CliMAF plotting scripts, build of an html page using the CliMAF html toolbox)
-are not directly usable.
+needs such a declaration ahead of script execution. CLiMAF uses the
+output labels for naming the actual outputs by combining it with the
+the CRS expresssion representing the script call. This is instrumental
+in CLiMAF's logic for caching all results, including in order to
+re-use outputs in further processing.  Therefore, all CliMAF
+functionalities downstream of the execution of a script (cache, use of
+CliMAF plotting scripts, build of an html page using the CliMAF html
+toolbox) are not directly usable.
 
 ### CliMAF changes needed for compatibility
 The main changes that would be needed in CliMAF for interfacing with
@@ -314,6 +319,52 @@ and implemented in version 2.0.2 of CliMAF the changes needed for
 interfacing with version 2.3 of ESMVaTool, as [described in CLiMAF
 documentation](https://climaf.readthedocs.io/en/master/esmvaltool.html).
 This was successfully tested for calling the Climate Variability
-Diagnostic Package (CVDP) embarked in ESVMavTool, and [ŧhis
-page](https://climaf.readthedocs.io/en/master/esmvaltool.html#example)
-shows a pratical CliMAF scripting example.
+Diagnostic Package (CVDP) embarked in ESVMavTool, and the code below 
+shows the corresponding CliMAF script.
+
+
+      # An example of declaring and calling an ESMValTool script from CliMAF
+      
+      from climaf.api import *
+      from climaf.ESMValTool_diags import evt_script
+      
+      # If your platform is not Ciclad, you must tell which is the wrapper for ESMValTool scripts
+      climaf.ESMValTool_diags.wrapper = "~/scripts/ESMValTool_python_diags_wrapper_for_ciclad.sh"
+      
+      # Create a CliMAF function for calling the ESMValTool diagnostic script
+      # (use the same syntax as the ESMVaTool recipe for designating the script)
+      evt_script("call_cvdp", "cvdp/cvdp_wrapper")
+      
+      # Prepare input datasets for the diag. 
+      base      = dict(project="CMIP6", experiment="historical",
+                       realization='r1i1p1f2',  table="Amon", period="1850-1855", )
+      models    = [ "CNRM-CM6-1", "CNRM-ESM2-1"]
+      
+      variables = [ "ts", "tas", "pr", "psl" ]
+      
+      ensembles = []
+      for variable in variables:
+          ensemble = cens(
+              {
+                  model :  ds(model=model, variable=variable, **base)
+                  for model in models
+              })
+          ensembles.append(ensemble)
+      
+      # Note : here, for other diagnostic scripts, you may have to reproduce
+      # the preprocessing steps that ESMValTool recipes implement upstream
+      # of the diagnostic script. For CVDP, there is actually no such
+      # preprocessing
+          
+      # Call the diag. You may provide parameters that are known to ESMValTool
+      # or to the diagnostic script
+      wdir, prov = call_cvdp(*ensembles, output_dir="./out", write_netcdf=False)
+      
+      # First returned value is the diag's working directory
+      print(wdir)
+      
+      # Second one is a dictionnary of provenance information which
+      # describes all outputs (either graphics or NetCDF files) by various
+      # attributes, one of which being a 'caption'
+      one_output, its_attributes=prov.popitem()
+      print(one_output, its_attributes['caption'])
