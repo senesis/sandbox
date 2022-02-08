@@ -7,7 +7,9 @@ February 2022
 ## Abstract
 CliMAF is largely compatible with the IS-ENES3 standard interface, and
 this was demonstrated by an actual implementation using the parent
-interface (ESMValTool's). However, CLiMAF cannot handle script outputs
+interface (ESMValTool's). 
+It is thus possible to execute a script that uses the standard interface from CliMAF.
+However, CLiMAF looses its smart cache functionnality when executing a script using the standard interface: it cannot handle script outputs
 in its cache because the standard interface does not describe script
 outputs.
 
@@ -53,18 +55,18 @@ model outputs described through an abstraction : input data are
 defined by facets which translate to actual data files through
 configuration of so-called data projects.
 
-CliMAF allows :
+CliMAF allows to :
 
-- to apply diagnostic 'scripts', coded in any language, provided they
+- apply diagnostic 'scripts', coded in any language, provided they
   meet very minimal requirements, and they accept command-line
   arguments
-- to easily describe piping and combining such scripts, using the
+- easily describe piping and combining such scripts, using the
   full flexibility of python
-- to keep track of such combinations by building formal expressions in
-  a simple syntax (called **CRS** for CliMAF Reference Syntax)
-- to trigger CRS expression computation only once needed (this is also
+- keep track of such combinations by building formal expressions in
+  a simple syntax (called **CRS** for CliMAF Reference Syntax); the CRS is notably a way to document the provenance of all CliMAF result and build a unique identifier for each result
+- trigger CRS expression computation only once needed (this is also
   called 'lazy evaluation')
-- to handle a cache of results, which access keys are CRS expressions.
+- handle a cache of results, which access keys are CRS expressions.
 
 ### Scripts interface principles in CliMAF 
 #### Data formats
@@ -148,21 +150,21 @@ section](https://climaf.readthedocs.io/en/master/operators.html#operators)
 Declare operator ``my_cdo`` based on an off-the-shelf
 script/binary (``cdo``):
 
-       cscript('mycdo','cdo ${operator} ${in} ${out}')
+       cscript('my_cdo','cdo ${operator} ${in} ${out}')
 
 Use the defined operator in CliMAF : define a dataset ``tas_ds``
 and apply ``my_cdo`` on it, providing it with value ``timavg`` for
 argument ``operator``:
 
        tas_ds = ds(project='example', simulation='AMIP', variable='tas', period='1980-1981')
-       tas_avg = mycdo(tas_ds,operator='timavg')
+       tas_avg = my_cdo(tas_ds,operator='timavg')
 
 The script/binary is actually called e.g. when requesting a file with
 the content of object ``tas_avg``, as in:
 
        filen = cfile(tas_avg)
 
-which returns the filename (built by CliMAF using the user provided path to the CliMAF cache and a hash of the CRS):
+cfile both executes the script on ``tas_avg`` and returns the filename (built by CliMAF using the user provided path to the CliMAF cache and a hash of the CRS):
 
       /home/my/tmp/climaf_cache/4e/4.nc
 
@@ -206,7 +208,11 @@ not explicit.
 
 
 ## Compatibility between the IS-ENES3 standard interface and CliMAF
-CliMAF is a natural candidate for being one of the `tools` using the ISI. 
+CliMAF is a natural candidate for being one of the `tools` using the ISI.
+We will comment on two levels of compatibilities:
+- shallow compatibility: can CliMAF execute a script that follows the ISI?
+- deep compatibility: does the ISI affect some functionalities of CliMAF?
+
 ###  Shallow compatibility
 CliMAF interface design is quite different from ISI's:
 
@@ -250,10 +256,13 @@ Three other differences can be noted :
 The most significant difference between ISI and CLiMAF interface is
 about declaring script's outputs : ISI provides no way to declare how
 many outputs the script will generate, nor to label them, while CliMAF
-imposes it. CLiMAF use the output labels for naming the actual outputs
+imposes it. CLiMAF uses the output labels for naming the actual outputs
 by combining it with the the CRS expresssion representing the script
 call. This is instrumental in CLiMAF's logic for caching all results,
 including in order to re-use outputs in further processing.
+Therefore, all CliMAF functionalities downstream of the execution of a script
+(cache, use of CliMAF plotting scripts, build of an html page using the CliMAF html toolbox)
+are not directly usable.
 
 ### CliMAF changes needed for compatibility
 The main changes that would be needed in CliMAF for interfacing with
@@ -278,8 +287,7 @@ of these scripts which are actually binaries that live outside CliMAF
 (such as CDO commands) and hence are not easy to modify; for the few
 other ones, the change is not necessarily useful
 
-
-### Changes to the standard needed for compatibility
+### Changes to the standard needed for deep compatibility
 The sole change in ISI that is instrumental for CLiMAF to take full
 advantage of ISI compatible scripts in CliMAF is related to the deep
 compatibility issue invoked [above](#deep-comatibility). It would be
