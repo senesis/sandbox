@@ -1,11 +1,5 @@
 # C-ESM-EP user guide for the case of a libIGCM simulation
 
-S.Senesi - sept 2022
-
-Changes :  
--   feb 2023 : Spirit is managed
--   jul 2023 : Jean Zay is managed
-
 Pre-requisites :  
 -   some basic knowledege of C-ESM-EP (i.e. organization of a C-ESM-EP
     home directory, and concept of a 'comparison')
@@ -25,29 +19,28 @@ simulation. Slices number and duration are tunable.
 
 ### Init phase
 
-At TGCC ad IDRIS, because C-ESM-EP requires a number of software
-packages, C-ESM-EP uses either TGCC's tool 'pcocc-rs' (see
+At TGCC and IDRIS, because C-ESM-EP requires a number of software
+packages, C-ESM-EP uses either TGCC's tool `pcocc-rs` (see
 <https://pcocc.readthedocs.io/>) or IDRIS installed software
-'singularity', and you must tell this tool where to find a relevant
+`singularity`, and you must tell this tool where to find a relevant
 environment, by interactively issuing a few commands:
 
 TGCC:
 
     pcocc-rs image import docker-archive:<file> cesmep_container
 
-where \<file\> is the path for the most recent file in <span
-class="title-ref">/ccc/work/cont003/igcmg/igcmg/climaf_python_docker_archives/</span>
+where \<file\> is the path for the most recent file in `/ccc/work/cont003/igcmg/igcmg/climaf_python_docker_archives/`
 (ask your C-ESM-EP guru in case of trouble). If you already executed
 that command before (for importing another file), you have to first
-discard that file <span class="title-ref">pcocc-rs image delete
-cesmep_container</span>
+discard that file with : `pcocc-rs image delete cesmep_container`
 
 IDRIS:
 
     module load singularity
     idrcontmgr cp /gpfswork/rech/psl/commun/Tools/cesmep_environment/<file>
 
-    where <file> is the most recent '.sif' file there (ask your C-ESM-EP guru in case of trouble). You must check using `idrcontmgr ls` that you have only one registered file; use `idrcontmgr rm ...` to discard any other file.
+where \<file\> is the most recent `.sif` file there (ask your C-ESM-EP guru in case of trouble). 
+You must check using `idrcontmgr ls` that you have only one registered file; use `idrcontmgr rm ...` to discard any other file.
 
 This init pahse should be done only once by each user. The paths above
 are correct at the time of writing and may change in the future.
@@ -83,33 +76,29 @@ Example of config.card minimal content (in section 'Post'):
 
 ### How it works
 
-When installing a simulation using <span
-class="title-ref">ins_job</span>, the C-ESM-EP code (from a reference
-code version) is partially copied to <span
-class="title-ref">$SUMBIT_DIR/cesemp_lite/</span>, which becomes the
+When installing a simulation using `ins_job`, the C-ESM-EP code (from a reference
+code version) is partially copied to `$SUMBIT_DIR/cesemp_lite/`, which becomes the
 root C-ESM-EP directory for that simulation.
 
-The C-ESM-EP comparison that is ran by default is <span
-class="title-ref">run_comparison</span> and, in directory cesmep_lite/,
+The C-ESM-EP comparison that is ran by default is `run_comparison` and, in directory cesmep_lite/,
 that comparison name is further prefixed by your JobName (this matters
 when looking for outputs, see below)
 
-Except for case <span class="title-ref">AtEnd</span>, the atlas is
+Except for case `AtEnd`, the atlas is
 computed each time a batch of output is available for the selected type,
 provided it allows to process a new time slice. Time slicing is aligned
 with simulation start date and complies with values for parameters
 CesmepSlices and CesmepPeriod.
 
 The account used for C-ESM-EP jobs is the one used by libIGCM for the
-simulation. If you wish to change it, please edit file <span
-class="title-ref">cesmep_lite/settings.py</span> accordingly, after
-execution of <span class="title-ref">ins_job</span> and before the end
+simulation. If you wish to change it, please edit file `cesmep_lite/settings.py` accordingly, after
+execution of `ins_job\ and before the end
 of first simulation period.
 
 ### Outputs
 
 The standard output of last C-ESM-EP launch is availabe in
-$SUMBIT_DIR/cesemp_lite/libIGCM_post.out, and the output for each
+`$SUMBIT_DIR/cesemp_lite/libIGCM_post.out`, and the output for each
 component is located, as for all C-ESM-EP runs, in the component
 directory
 
@@ -120,34 +109,34 @@ found at:
 > <https://thredds-su.ipsl.fr/thredds/fileServer/tgcc_thredds/work/senesis/C-ESM-EP/myFG2_mycomparison_senesis/C-ESM-EP_myFG2_mycomparison.html>
 
 The actual value for your simulation can be found in the file quoted
-above, $SUMBIT_DIR/cesemp_lite/libIGCM_post.out
+above, `$SUMBIT_DIR/cesemp_lite/libIGCM_post.out`
 
 ## Advanced use
 
 By default, the C-ESM-EP code used is a shared one (which location shows
 below); this can be changed using config.card's Post section's parameter
-<span class="title-ref">CesmepCode</span>.
+`CesmepCode`.
 
-The reference C-ESM-EP code locations are : - at TGCC :
-\~igcmg/Tools/cesmep - at IDRIS :
-/gpfswork/rech/psl/commun/Tools/cesmep - on spirit:
-/net/nfs/tools/Users/SU/jservon/cesmep_installs/cesmep_for_libIGCM
+The reference C-ESM-EP code locations are : 
+- at TGCC : `~igcmg/Tools/cesmep`
+- at IDRIS : `/gpfswork/rech/psl/commun/Tools/cesmep`
+- on spirit: `/net/nfs/tools/Users/SU/jservon/cesmep_installs/cesmep_for_libIGCM`
 
 The C-ESM-EP 'comparison' can be chosen using config.card's Post
-parameter <span class="title-ref">CesmepComparison</span>.
+parameter `CesmepComparison`.
 
 The comparison 'components' are activated based on the simulation
 physical components; their list can be changed manually after running
-<span class="title-ref">ins_job</span> by editing file
-$SUMBIT_DIR/cesemp_lite/libIGCM_post.param (which fields are: Cesmep
+`ins_job` by editing file
+`$SUMBIT_DIR/cesemp_lite/libIGCM_post.param` (which fields are: Cesmep
 code location, comparison name, simulation start date, cache location,
 components list)
 
 At that stage, you may also change component parameters in component
-directories in $SUMBIT_DIR/cesemp_lite/. You may also make changes to
-the datasets_setup.py source for customizing the datasets to use; for
+directories in `$SUMBIT_DIR/cesemp_lite/`. You may also make changes to
+the `atasets_setup.py` source for customizing the datasets to use; for
 that, you can make use of the variables available in comparison's
-directory file libIGCM_fixed_settings.py, as e.g. :
+directory file `libIGCM_fixed_settings.py`, as e.g. :
 
     root           = '/ccc/store/cont003/gen0826'
     Login          = 'senesis'
@@ -167,22 +156,22 @@ these ones:
 -   DateBegin : the simulation start date
 -   CesmepPeriod : the duration of atlas time slices
 
-The location for CliMAF cache is dedicated to the simulation and under a root path chosen by C-ESM-EP ::  
-${root}/cesmep_climaf_caches/${OUT}\_${TagName}\_${SpaceName}\_${ExperimentName}\_${JobName}.
+The location for CliMAF cache is dedicated to the simulation and under a root path chosen by C-ESM-EP :
+
+    ${root}/cesmep_climaf_caches/${OUT}\_${TagName}\_${SpaceName}\_${ExperimentName}\_${JobName}.
 
 With:  
--   on Irene, root=${CCCSCRATCHDIR}
--   on Jean-Zay, root=$SCRATCH.
--   on Spirit, root=/scratchu/$user.
+-   on Irene, `root=${CCCSCRATCHDIR}`
+-   on Jean-Zay, `root=$SCRATCH`
+-   on Spirit, `root=/scratchu/$user`
 
 You can receive mails for the completion of each new atlas slice by setting ::  
 CesmepMail=TRUE
 
 in config.card, and by providing your email adress in config.card
 (parameter MailName in section UserChoices, which defaults to content of
-\~/.forward. Depending on the content of file <span
-class="title-ref">cesmep_lite/settings.py</span> (see there variable
-<span class="title-ref">one_mail_per_component</span>), you will get a
+`~/.forward`. Depending on the content of file `cesmep_lite/settings.py` (see there variable
+`one_mail_per_component`), you will get a
 mail for each component's job, or a mail for the set of jobs.
 
 ### Example of config.card full content
@@ -203,7 +192,7 @@ Example:
 
 ### For power users
 
-Directory <span class="title-ref">cesmep_lite/</span> does not include
+Directory `cesmep_lite/` does not include
 all files of a standard C-ESM-EP root directory, in order to save inodes
 (and this is achieved thanks to the PYTHONPATH set by libIGCM for
 running C-ESM-EP, and by symbolic links for some other files). If you
