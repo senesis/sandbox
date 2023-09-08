@@ -52,7 +52,7 @@ On Spirit, there is no need for such an init phase.
 
 ### Settings:
 
-Computing a C-ESM-EP atlas is triggered using parameter 'Cesmep' in
+Computing a C-ESM-EP atlas is triggered using parameter `Cesmep` in
 section Post of the config.card, which can be set to :
 
 -   TRUE, or \<nyears\>Y, for using the most efficient output type
@@ -66,7 +66,7 @@ section Post of the config.card, which can be set to :
     data (this works for TEST simulations with output on scratch)
 -   FALSE for deactivating any C-ESM-EP atlas (which is the default)
 
-In same section, parameter 'CesmepSlices' allows to set the number of
+In same section, parameter `CesmepSlices` allows to set the number of
 time slices to show in atlas (it defaults to 8).
 
 Example of config.card minimal content (in section 'Post'):
@@ -92,7 +92,7 @@ CesmepSlices and CesmepPeriod.
 
 The account used for C-ESM-EP jobs is the one used by libIGCM for the
 simulation. If you wish to change it, please edit file `cesmep_lite/settings.py` accordingly, after
-execution of `ins_job\ and before the end
+execution of `ins_job` and before the end
 of first simulation period.
 
 ### Outputs
@@ -106,7 +106,7 @@ The atlas main page is available on thredds/work like for other C-ESM-EP
 simulation e.g., if JobName is 'myFG2' on Irene, atlas main index can be
 found at:
 
-> <https://thredds-su.ipsl.fr/thredds/fileServer/tgcc_thredds/work/senesis/C-ESM-EP/myFG2_mycomparison_senesis/C-ESM-EP_myFG2_mycomparison.html>
+  <https://thredds-su.ipsl.fr/thredds/fileServer/tgcc_thredds/work/senesis/C-ESM-EP/myFG2_mycomparison_senesis/C-ESM-EP_myFG2_mycomparison.html>
 
 The actual value for your simulation can be found in the file quoted
 above, `$SUMBIT_DIR/cesemp_lite/libIGCM_post.out`
@@ -169,8 +169,8 @@ You can receive mails for the completion of each new atlas slice by setting ::
 CesmepMail=TRUE
 
 in config.card, and by providing your email adress in config.card
-(parameter MailName in section UserChoices, which defaults to content of
-`~/.forward`. Depending on the content of file `cesmep_lite/settings.py` (see there variable
+(parameter `MailName` in section UserChoices, which defaults to content of
+`~/.forward`). Depending on the content of file `cesmep_lite/settings.py` (see there variable
 `one_mail_per_component`), you will get a
 mail for each component's job, or a mail for the set of jobs.
 
